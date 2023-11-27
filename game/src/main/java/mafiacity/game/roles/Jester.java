@@ -3,7 +3,6 @@ package mafiacity.game.roles;
 import mafiacity.game.*;
 
 import java.util.List;
-import java.util.function.Function;
 
 public class Jester implements Role{
 	
@@ -17,7 +16,7 @@ public class Jester implements Role{
 	
 	public List<Action> actions(GameState state, Player p){
 		return List.of(
-				targeted("prank", ResolvedAction.Priorities.DEDUCE, state, target -> p.visit(target, state.time()))
+				targeted("jester:prank", Action.Priorities.DEDUCE, state, p::visit)
 		);
 	}
 }

@@ -11,7 +11,7 @@ public final class GameState{
 	/**
 	 * The set of dead and alive players.
 	 */
-	private final List<Player> alive = new ArrayList<>(), dead = new ArrayList<>();
+	private final List<Player> players = new ArrayList<>();
 	/**
 	 * The actions chosen by living players.
 	 */
@@ -20,13 +20,12 @@ public final class GameState{
 	// setup
 	
 	/**
-	 * Add a new player to the game. They will be made alive and have no statues.
-	 *
-	 * @param p
-	 * 		The player to introduce.
+	 * Add a new player to the game, alive and with no statues.
 	 */
-	public void introducePlayer(Player p){
-		alive.add(p);
+	public Player introducePlayer(String name, Role role){
+		var player = new Player(name, role, this);
+		players.add(player);
+		return player;
 	}
 	
 	// making things happen
@@ -40,6 +39,20 @@ public final class GameState{
 		chosenActions.put(p, a);
 	}
 	
+	public boolean commitAction(String playerName, String actionName, String actionParams){
+		if(find(playerName) instanceof Player p){
+			Optional<Action> action = p.role.actions(this, p).stream().filter(a -> a.id().equals(actionName)).findFirst();
+			if(action.isPresent()){
+				ResolvedAction resolved = action.get().resolve(actionParams);
+				if(resolved != null){
+					commitAction(p, resolved);
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	public void advance(){
 		List<Map.Entry<Player, ResolvedAction>> list = chosenActions
 				.entrySet().stream()
@@ -51,21 +64,15 @@ public final class GameState{
 		
 		chosenActions.clear();
 		time++;
-	}
-	
-	public void killPlayer(Player p){
-		alive.remove(p);
-		dead.add(p);
+		for(Player player : players)
+			player.reset();
 	}
 	
 	// helpers
 	
 	public Player find(String name){
 		name = name.toLowerCase().trim();
-		for(Player player : alive)
-			if(player.name.equals(name))
-				return player;
-		for(Player player : dead)
+		for(Player player : players)
 			if(player.name.equals(name))
 				return player;
 		return null;

@@ -2,7 +2,6 @@ package mafiacity.game;
 
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 public interface Role{
@@ -11,6 +10,10 @@ public interface Role{
 	String name();
 	
 	List<Action> actions(GameState state, Player p);
+	
+	default void applyPassives(Player p){}
+	
+	// helpers
 	
 	default Action invariant(String id, int priority, Runnable onSelected){
 		return new Action(id, __ -> new ResolvedAction(priority, onSelected));
