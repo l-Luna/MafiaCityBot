@@ -18,12 +18,14 @@ public class Bartender implements Role{
 	}
 	
 	public List<Action> actions(GameState state, Player p){
-		return List.of(
-			targeted("bartender:drink_up", Action.Priorities.BLOCK, state, target -> {
-				p.visit(target);
-				target.blocked = true;
-			})
-			// another round...
-		);
+		if(state.isNight())
+			return List.of(
+					targeted("bartender:drink_up", Action.Priorities.BLOCK, state, target -> {
+						p.visit(target);
+						target.blocked = true;
+					})
+					// another round...
+			);
+		return List.of();
 	}
 }

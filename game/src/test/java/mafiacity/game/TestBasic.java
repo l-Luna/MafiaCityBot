@@ -17,10 +17,13 @@ public class TestBasic{
 				juckter = state.introducePlayer("juckter", new Godfather()),
 				luna = state.introducePlayer("luna", new Jester());
 		
+		// skip day 1
+		state.advance();
+		
 		// setup some actions and continue the night
-		state.commitAction("aiden", "bartender:drink_up", "juckter");
-		state.commitAction("juckter", "godfather:kill", "luna");
-		state.commitAction("luna", "jester:prank", "aiden");
+		assertTrue(state.commitAction("aiden", "bartender:drink_up", "juckter"));
+		assertTrue(state.commitAction("juckter", "godfather:kill", "luna"));
+		assertTrue(state.commitAction("luna", "jester:prank", "aiden"));
 		state.advance();
 		
 		// everyone should still be alive
@@ -29,12 +32,15 @@ public class TestBasic{
 		assertTrue(luna.alive);
 		
 		// aiden and luna should have visited, but juckter should have not
-		assertTrue(aiden.visitLog.containsKey(0) && aiden.visitLog.get(0).contains(juckter));
-		assertTrue(luna.visitLog.containsKey(0) && luna.visitLog.get(0).contains(aiden));
-		assertTrue(!juckter.visitLog.containsKey(0) || juckter.visitLog.get(0).isEmpty());
+		assertTrue(aiden.visitLog.containsKey(1) && aiden.visitLog.get(1).contains(juckter));
+		assertTrue(luna.visitLog.containsKey(1) && luna.visitLog.get(1).contains(aiden));
+		assertTrue(!juckter.visitLog.containsKey(1) || juckter.visitLog.get(1).isEmpty());
+		
+		// skip day 2
+		state.advance();
 		
 		// now juckter kills luna, and nothing else happens
-		state.commitAction("juckter", "godfather:kill", "luna");
+		assertTrue(state.commitAction("juckter", "godfather:kill", "luna"));
 		state.advance();
 		
 		// luna should be dead, and nobody else
@@ -43,8 +49,8 @@ public class TestBasic{
 		assertFalse(luna.alive);
 		
 		// juckter should have visited, and nobody else
-		assertTrue(!aiden.visitLog.containsKey(1) || aiden.visitLog.get(1).isEmpty());
-		assertTrue(!luna.visitLog.containsKey(1) || luna.visitLog.get(1).isEmpty());
-		assertTrue(juckter.visitLog.containsKey(1) && juckter.visitLog.get(1).contains(luna));
+		assertTrue(!aiden.visitLog.containsKey(3) || aiden.visitLog.get(3).isEmpty());
+		assertTrue(!luna.visitLog.containsKey(3) || luna.visitLog.get(3).isEmpty());
+		assertTrue(juckter.visitLog.containsKey(3) && juckter.visitLog.get(3).contains(luna));
 	}
 }

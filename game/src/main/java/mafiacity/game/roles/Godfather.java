@@ -15,12 +15,14 @@ public class Godfather implements Role{
 	}
 	
 	public List<Action> actions(GameState state, Player p){
-		return List.of(
-			targeted("godfather:kill", Action.Priorities.KILL, state, target -> {
-				p.visit(target);
-				target.kill(1);
-			})
-		);
+		if(state.isNight())
+			return List.of(
+					targeted("godfather:kill", Action.Priorities.KILL, state, target -> {
+						p.visit(target);
+						target.kill(1);
+					})
+			);
+		return List.of();
 	}
 	
 	public void applyPassives(Player p){

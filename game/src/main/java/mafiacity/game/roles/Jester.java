@@ -15,8 +15,10 @@ public class Jester implements Role{
 	}
 	
 	public List<Action> actions(GameState state, Player p){
-		return List.of(
-				targeted("jester:prank", Action.Priorities.DEDUCE, state, p::visit)
-		);
+		if(state.isNight())
+			return List.of(
+					targeted("jester:prank", Action.Priorities.DEDUCE, state, p::visit)
+			);
+		return List.of();
 	}
 }
